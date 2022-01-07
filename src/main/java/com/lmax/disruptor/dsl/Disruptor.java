@@ -399,9 +399,13 @@ public class Disruptor<T>
      */
     public RingBuffer<T> start()
     {
+        // 检查当前破坏器是否只开启一次
         checkOnlyStartedOnce();
+
+        // 遍历消费者工厂
         for (final ConsumerInfo consumerInfo : consumerRepository)
         {
+            // 用执行器开启消费者信息
             consumerInfo.start(executor);
         }
 
@@ -585,6 +589,7 @@ public class Disruptor<T>
         // 更新收集的序列，用于链中的下一次
         updateGatingSequencesForNextInChain(barrierSequences, processorSequences);
 
+        // 实例化并返回时间处理器组
         return new EventHandlerGroup<>(this, consumerRepository, processorSequences);
     }
 
@@ -595,10 +600,15 @@ public class Disruptor<T>
         {
             // 向环形缓冲增加收集序列数组
             ringBuffer.addGatingSequences(processorSequences);
+            // 遍历栅栏序列
             for (final Sequence barrierSequence : barrierSequences)
             {
+                // 不细究
+                // 唤醒缓冲，移除对当前栅栏序列的收集
                 ringBuffer.removeGatingSequence(barrierSequence);
             }
+
+            // 消费者仓库取消将事件处理器标记为链尾
             consumerRepository.unMarkEventProcessorsAsEndOfChain(barrierSequences);
         }
     }
@@ -643,8 +653,10 @@ public class Disruptor<T>
 
     private void checkOnlyStartedOnce()
     {
+        // cas修改启动标记
         if (!started.compareAndSet(false, true))
         {
+            // 不细究
             throw new IllegalStateException("Disruptor.start() must only be called once.");
         }
     }

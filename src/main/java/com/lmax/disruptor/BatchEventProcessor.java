@@ -118,15 +118,20 @@ public final class BatchEventProcessor<T>
     @Override
     public void run()
     {
+        // cas地将当前批量事件处理器的运行状态从空闲状态改为运行状态
         if (running.compareAndSet(IDLE, RUNNING))
         {
+            // 当前批事件处理器的序列栅栏器清空警告
             sequenceBarrier.clearAlert();
 
+            // 通知启动（一般是通知用户自定义的事件处理者，如果该事件处理器实现了生命周期感知接口
             notifyStart();
             try
             {
+                // 再次判断，如果当前批事件处理器正在运行
                 if (running.get() == RUNNING)
                 {
+                    // 处理事件
                     processEvents();
                 }
             }
@@ -155,12 +160,14 @@ public final class BatchEventProcessor<T>
     private void processEvents()
     {
         T event = null;
+        // 获得当前批事件处理器的下一个序列值
         long nextSequence = sequence.get() + 1L;
 
         while (true)
         {
             try
             {
+                // 当前批事件处理器的序列栅栏做等待操作，直到获得下一个可用序列
                 final long availableSequence = sequenceBarrier.waitFor(nextSequence);
                 if (batchStartAware != null)
                 {
@@ -222,8 +229,12 @@ public final class BatchEventProcessor<T>
      */
     private void notifyStart()
     {
+        // 如果当前批事件处理器的事件处理器是生命周期感知实例
         if (eventHandler instanceof LifecycleAware)
         {
+            /*
+                以下不细究
+             */
             try
             {
                 ((LifecycleAware) eventHandler).onStart();

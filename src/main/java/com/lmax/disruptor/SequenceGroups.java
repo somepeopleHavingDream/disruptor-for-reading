@@ -79,12 +79,15 @@ class SequenceGroups
 
         do
         {
+            // 获得原有的序列集
             oldSequences = sequenceUpdater.get(holder);
-
+            // 计算出要移除的序列个数
             numToRemove = countMatching(oldSequences, sequence);
 
+            // 如果不需要移除
             if (0 == numToRemove)
             {
+                // 直接退出
                 break;
             }
 
@@ -107,6 +110,9 @@ class SequenceGroups
 
     private static <T> int countMatching(T[] values, final T toMatch)
     {
+        /*
+            统计要移除的个数
+         */
         int numToRemove = 0;
         for (T value : values)
         {

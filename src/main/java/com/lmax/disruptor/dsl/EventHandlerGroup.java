@@ -39,6 +39,7 @@ public class EventHandlerGroup<T>
         final ConsumerRepository<T> consumerRepository,
         final Sequence[] sequences)
     {
+        // 设置当前事件处理器组的破坏器、消费者仓库、序列集
         this.disruptor = disruptor;
         this.consumerRepository = consumerRepository;
         this.sequences = Arrays.copyOf(sequences, sequences.length);

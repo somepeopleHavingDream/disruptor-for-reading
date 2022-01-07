@@ -56,8 +56,10 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
     public long waitFor(final long sequence)
         throws AlertException, InterruptedException, TimeoutException
     {
+        // 检查警告
         checkAlert();
 
+        // 等待策略，做等待操作，直到获得可用的序列
         long availableSequence = waitStrategy.waitFor(sequence, cursorSequence, dependentSequence, this);
 
         if (availableSequence < sequence)
@@ -90,14 +92,17 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
     @Override
     public void clearAlert()
     {
+        // 将当前正在处理的序列栅栏的警告标记值置为假
         alerted = false;
     }
 
     @Override
     public void checkAlert() throws AlertException
     {
+        // 如果当前正在处理序列栅栏被警告了
         if (alerted)
         {
+            // 抛出警告异常
             throw AlertException.INSTANCE;
         }
     }

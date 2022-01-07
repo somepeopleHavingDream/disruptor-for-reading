@@ -98,8 +98,10 @@ class ConsumerRepository<T> implements Iterable<ConsumerInfo>
 
     public void unMarkEventProcessorsAsEndOfChain(final Sequence... barrierEventProcessors)
     {
+        // 遍历所有的栅栏事件处理器
         for (Sequence barrierEventProcessor : barrierEventProcessors)
         {
+            // 不细究
             getEventProcessorInfo(barrierEventProcessor).markAsUsedInBarrier();
         }
     }
@@ -107,6 +109,7 @@ class ConsumerRepository<T> implements Iterable<ConsumerInfo>
     @Override
     public Iterator<ConsumerInfo> iterator()
     {
+        // 获取并返回消费者信息集的迭代器
         return consumerInfos.iterator();
     }
 

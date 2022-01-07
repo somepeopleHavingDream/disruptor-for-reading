@@ -36,8 +36,11 @@ public final class BlockingWaitStrategy implements WaitStrategy
         throws AlertException, InterruptedException
     {
         long availableSequence;
+
+        // 如果入参游标序列值小于入参期望序列值
         if (cursorSequence.get() < sequence)
         {
+            // 上锁
             lock.lock();
             try
             {

@@ -418,6 +418,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      */
     public boolean removeGatingSequence(Sequence sequence)
     {
+        // 当前环形缓冲的序列器移除对入参序列的收集
         return sequencer.removeGatingSequence(sequence);
     }
 

@@ -97,6 +97,7 @@ public abstract class AbstractSequencer implements Sequencer
     @Override
     public boolean removeGatingSequence(Sequence sequence)
     {
+        // 序列组移除序列
         return SequenceGroups.removeSequence(this, SEQUENCE_UPDATER, sequence);
     }
 
