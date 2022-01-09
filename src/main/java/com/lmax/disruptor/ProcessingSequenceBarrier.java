@@ -39,7 +39,7 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
         this.waitStrategy = waitStrategy;
         this.cursorSequence = cursorSequence;
 
-        // 如果所依赖的序号数组长度为0
+        // 如果所依赖的序列数组长度为0
         if (0 == dependentSequences.length)
         {
             // 将当前处理序列栅栏所依赖的序列，设置为游标序列
@@ -61,12 +61,14 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
 
         // 等待策略，做等待操作，直到获得可用的序列
         long availableSequence = waitStrategy.waitFor(sequence, cursorSequence, dependentSequence, this);
-
+        // 如果可用序列号小于入参序列号
         if (availableSequence < sequence)
         {
+            // 不细究
             return availableSequence;
         }
 
+        // 获得并返回序列器的最高发布序列
         return sequencer.getHighestPublishedSequence(sequence, availableSequence);
     }
 

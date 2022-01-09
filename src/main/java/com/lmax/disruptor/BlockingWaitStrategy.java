@@ -44,24 +44,33 @@ public final class BlockingWaitStrategy implements WaitStrategy
             lock.lock();
             try
             {
+                // 当游标序列值（一般为单生产序列器的值）小于入参序列值
                 while (cursorSequence.get() < sequence)
                 {
+                    // 序列栅栏检查警告
                     barrier.checkAlert();
+                    // 等待处理器通知条件成立
                     processorNotifyCondition.await();
                 }
             }
             finally
             {
+                // 解锁
                 lock.unlock();
             }
         }
 
+        // 当从依赖序列中获得的可用序列值小于入参序列值时
         while ((availableSequence = dependentSequence.get()) < sequence)
         {
+            /*
+                不细究
+             */
             barrier.checkAlert();
             ThreadHints.onSpinWait();
         }
 
+        // 返回可用序列值
         return availableSequence;
     }
 

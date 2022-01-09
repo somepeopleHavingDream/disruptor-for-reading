@@ -137,12 +137,17 @@ public final class BatchEventProcessor<T>
             }
             finally
             {
+                // 当退出处理事件循环，该批量事件处理器做通知关闭操作
                 notifyShutdown();
+                // 将当前批事件处理器的运行状态改为空闲状态
                 running.set(IDLE);
             }
         }
         else
         {
+            /*
+                以下不细究
+             */
             // This is a little bit of guess work.  The running state could of changed to HALTED by
             // this point.  However, Java does not have compareAndExchange which is the only way
             // to get it exactly correct.
@@ -169,33 +174,47 @@ public final class BatchEventProcessor<T>
             {
                 // 当前批事件处理器的序列栅栏做等待操作，直到获得下一个可用序列
                 final long availableSequence = sequenceBarrier.waitFor(nextSequence);
+                // 如果该批事件处理器的批量开始感知实例存在
                 if (batchStartAware != null)
                 {
+                    // 不细究
                     batchStartAware.onBatchStart(availableSequence - nextSequence + 1);
                 }
 
+                // 当下一个序列值小于等于可用序列值（该可用序列号代表生产者的生产进度）
                 while (nextSequence <= availableSequence)
                 {
+                    // 传入下一个序列值，从数据提供者（一般为ringBuffer）中获得事件
                     event = dataProvider.get(nextSequence);
+                    // 将获取到的事件交由事件处理者（一般为用户代码）处理
                     eventHandler.onEvent(event, nextSequence, nextSequence == availableSequence);
+                    // 将下一个序列号加一
                     nextSequence++;
                 }
 
+                // 将当前批事件处理器的序列设值为可用序列值
                 sequence.set(availableSequence);
             }
             catch (final TimeoutException e)
             {
+                // 不细究
                 notifyTimeout(sequence.get());
             }
             catch (final AlertException ex)
             {
+                // 捕获到了警告异常
+                // 如果当前批事件处理器的运行状态不是正在运行状态
                 if (running.get() != RUNNING)
                 {
+                    // 退出循环
                     break;
                 }
             }
             catch (final Throwable ex)
             {
+                /*
+                    以下不细究
+                 */
                 handleEventException(ex, nextSequence, event);
                 sequence.set(nextSequence);
                 nextSequence++;
@@ -251,8 +270,12 @@ public final class BatchEventProcessor<T>
      */
     private void notifyShutdown()
     {
+        // 如果该批事件处理器是生命周期感知实例
         if (eventHandler instanceof LifecycleAware)
         {
+            /*
+                以下不细究
+             */
             try
             {
                 ((LifecycleAware) eventHandler).onShutdown();
