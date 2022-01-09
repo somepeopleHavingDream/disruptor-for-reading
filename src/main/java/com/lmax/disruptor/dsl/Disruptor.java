@@ -476,6 +476,7 @@ public class Disruptor<T>
      */
     public RingBuffer<T> getRingBuffer()
     {
+        // 返回当前破坏器的环形缓冲
         return ringBuffer;
     }
 
