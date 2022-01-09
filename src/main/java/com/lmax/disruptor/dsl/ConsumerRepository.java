@@ -67,16 +67,27 @@ class ConsumerRepository<T> implements Iterable<ConsumerInfo>
 
     public Sequence[] getLastSequenceInChain(boolean includeStopped)
     {
+        // 记录最近的序列集
         List<Sequence> lastSequence = new ArrayList<>();
+
+        // 遍历所有的消费者信息
         for (ConsumerInfo consumerInfo : consumerInfos)
         {
+            /*
+                如果满足以下条件
+                1 包括停止或消费者信息正在运行中
+                2 该消费者信息处于链尾
+             */
             if ((includeStopped || consumerInfo.isRunning()) && consumerInfo.isEndOfChain())
             {
+                // 获得该消费信息的所有序列
                 final Sequence[] sequences = consumerInfo.getSequences();
+                // 将从消费者信息中拿到的序列存入序列集中
                 Collections.addAll(lastSequence, sequences);
             }
         }
 
+        // 返回序列集数组
         return lastSequence.toArray(new Sequence[lastSequence.size()]);
     }
 

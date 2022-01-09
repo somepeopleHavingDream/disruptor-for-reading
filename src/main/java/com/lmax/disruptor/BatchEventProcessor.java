@@ -85,13 +85,16 @@ public final class BatchEventProcessor<T>
     @Override
     public void halt()
     {
+        // 将当前批事件处理器的运行状态改为停止状态
         running.set(HALTED);
+        // 警告当前批事件处理器的序列栅栏者
         sequenceBarrier.alert();
     }
 
     @Override
     public boolean isRunning()
     {
+        // 如果当前批事件处理器的运行状态不是空闲状态，说明当前批事件处理器处于运行中
         return running.get() != IDLE;
     }
 

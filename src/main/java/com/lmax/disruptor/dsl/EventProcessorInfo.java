@@ -53,6 +53,7 @@ class EventProcessorInfo<T> implements ConsumerInfo
     @Override
     public Sequence[] getSequences()
     {
+        // 从当前事件处理器信息的事件处理器中，拿到序列，封装成数组返回
         return new Sequence[]{eventprocessor.getSequence()};
     }
 
@@ -70,6 +71,7 @@ class EventProcessorInfo<T> implements ConsumerInfo
     @Override
     public boolean isEndOfChain()
     {
+        // 返回当前事件处理器信息是否在链尾
         return endOfChain;
     }
 
@@ -83,6 +85,7 @@ class EventProcessorInfo<T> implements ConsumerInfo
     @Override
     public void halt()
     {
+        // 关闭当前事件处理器信息的事件处理器
         eventprocessor.halt();
     }
 
@@ -98,6 +101,7 @@ class EventProcessorInfo<T> implements ConsumerInfo
     @Override
     public boolean isRunning()
     {
+        // 返回当前事件处理器信息中的事件处理器是否正在运行
         return eventprocessor.isRunning();
     }
 }

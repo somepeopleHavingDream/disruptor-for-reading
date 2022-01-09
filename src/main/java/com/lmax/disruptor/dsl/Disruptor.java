@@ -417,8 +417,10 @@ public class Disruptor<T>
      */
     public void halt()
     {
+        // 遍历当前破坏器的所有消费者信息
         for (final ConsumerInfo consumerInfo : consumerRepository)
         {
+            // 关闭消费者
             consumerInfo.halt();
         }
     }
@@ -435,6 +437,7 @@ public class Disruptor<T>
     {
         try
         {
+            // 当前破坏器做关闭操作
             shutdown(-1, TimeUnit.MILLISECONDS);
         }
         catch (final TimeoutException e)
@@ -456,15 +459,22 @@ public class Disruptor<T>
      */
     public void shutdown(final long timeout, final TimeUnit timeUnit) throws TimeoutException
     {
+        // 计算出超时时刻
         final long timeOutAt = System.currentTimeMillis() + timeUnit.toMillis(timeout);
+        // 当当前破坏器有积压
         while (hasBacklog())
         {
+            /*
+                以下不细究
+             */
             if (timeout >= 0 && System.currentTimeMillis() > timeOutAt)
             {
                 throw TimeoutException.INSTANCE;
             }
             // Busy spin
         }
+
+        // 停止当前破坏器
         halt();
     }
 
@@ -541,14 +551,20 @@ public class Disruptor<T>
      */
     private boolean hasBacklog()
     {
+        // 从当前破坏器的环形缓冲中获得游标值（一般该游标值代表生产者的生产进度）
         final long cursor = ringBuffer.getCursor();
+        // 遍历当前破坏器消费工厂里的所有消费者序列
         for (final Sequence consumer : consumerRepository.getLastSequenceInChain(false))
         {
+            // 如果游标值大于消费者的序列号
             if (cursor > consumer.get())
             {
+                // 返回真，代表生产者生产的事件有积压
                 return true;
             }
         }
+
+        // 返回假，代表消费者已经将生产者生产的事件做了消费
         return false;
     }
 

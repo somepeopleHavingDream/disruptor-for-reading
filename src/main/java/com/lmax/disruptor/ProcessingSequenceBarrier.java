@@ -87,7 +87,9 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
     @Override
     public void alert()
     {
+        // 将当前正在处理序列栅栏者的警告状态标记为真
         alerted = true;
+        // 通过该正在处理序列栅栏者的等待策略，通知所有阻塞着的线程
         waitStrategy.signalAllWhenBlocking();
     }
 

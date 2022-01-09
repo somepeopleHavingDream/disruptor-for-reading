@@ -49,7 +49,7 @@ public final class BlockingWaitStrategy implements WaitStrategy
                 {
                     // 序列栅栏检查警告
                     barrier.checkAlert();
-                    // 等待处理器通知条件成立
+                    // 等待处理器通知条件成立（这个地方会使线程挂起，直到生产者产生数据，因此该类叫做阻塞等待策略）
                     processorNotifyCondition.await();
                 }
             }
@@ -77,13 +77,16 @@ public final class BlockingWaitStrategy implements WaitStrategy
     @Override
     public void signalAllWhenBlocking()
     {
+        // 上锁
         lock.lock();
         try
         {
+            // 处理器通知条件满足，通知所有线程
             processorNotifyCondition.signalAll();
         }
         finally
         {
+            // 解锁
             lock.unlock();
         }
     }
