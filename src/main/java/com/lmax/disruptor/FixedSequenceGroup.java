@@ -33,6 +33,7 @@ public final class FixedSequenceGroup extends Sequence
      */
     public FixedSequenceGroup(Sequence[] sequences)
     {
+        // 设值当前固定序列组的序列集
         this.sequences = Arrays.copyOf(sequences, sequences.length);
     }
 

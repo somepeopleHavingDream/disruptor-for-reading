@@ -81,7 +81,7 @@ public final class BlockingWaitStrategy implements WaitStrategy
         lock.lock();
         try
         {
-            // 处理器通知条件满足，通知所有线程
+            // 处理器通知条件满足，通知所有线程（消费者线程）
             processorNotifyCondition.signalAll();
         }
         finally

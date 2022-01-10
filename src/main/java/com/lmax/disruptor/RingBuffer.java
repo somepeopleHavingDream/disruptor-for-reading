@@ -108,6 +108,7 @@ abstract class RingBufferFields<E> extends RingBufferPad
     @SuppressWarnings("unchecked")
     protected final E elementAt(long sequence)
     {
+        // 通过不安全实例获得对应元素，并且返回
         return (E) UNSAFE.getObject(entries, REF_ARRAY_BASE + ((sequence & indexMask) << REF_ELEMENT_SHIFT));
     }
 }
@@ -262,6 +263,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     @Override
     public E get(long sequence)
     {
+        // 返回在入参序列值处的元素
         return elementAt(sequence);
     }
 
@@ -285,6 +287,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     @Override
     public long next()
     {
+        // 调用并返回该环形缓冲的序列器的下一个序列值
         return sequencer.next();
     }
 
@@ -432,7 +435,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
      */
     public SequenceBarrier newBarrier(Sequence... sequencesToTrack)
     {
-        // 使用当前环形缓冲的序列器，实例化出一个栅栏
+        // 使用当前环形缓冲的序列器，实例化出一个序列栅栏
         return sequencer.newBarrier(sequencesToTrack);
     }
 
@@ -900,6 +903,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     @Override
     public void publish(long sequence)
     {
+        // 当前环形缓冲的序列器发布入参序列值
         sequencer.publish(sequence);
     }
 

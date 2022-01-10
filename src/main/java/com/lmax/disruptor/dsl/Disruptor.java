@@ -575,9 +575,9 @@ public class Disruptor<T>
         // 检查当前破坏器是否还未开启
         checkNotStarted();
 
-        // 有多少个事件处理器，就初始化多少个序列器，构成序列器数组
+        // 入参有多少个事件处理器，就初始化多少个序列器，构成序列器数组
         final Sequence[] processorSequences = new Sequence[eventHandlers.length];
-        // 通过入参栅栏序列数组，从环形缓冲中实例化出一个栅栏
+        // 通过入参栅栏序列数组，从环形缓冲中实例化出一个新序列栅栏
         final SequenceBarrier barrier = ringBuffer.newBarrier(barrierSequences);
 
         // 依次对每个事件处理器做处理
@@ -606,7 +606,7 @@ public class Disruptor<T>
         // 更新收集的序列，用于链中的下一次
         updateGatingSequencesForNextInChain(barrierSequences, processorSequences);
 
-        // 实例化并返回时间处理器组
+        // 实例化并返回事件处理器组
         return new EventHandlerGroup<>(this, consumerRepository, processorSequences);
     }
 

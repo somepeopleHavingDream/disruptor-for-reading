@@ -110,6 +110,7 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
     @Override
     public long next()
     {
+        // 调用并返回当前但生产者序列器的下一个序列值
         return next(1);
     }
 
@@ -119,19 +120,29 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
     @Override
     public long next(int n)
     {
+        // 如果入参值小于1
         if (n < 1)
         {
+            // 不细究
             throw new IllegalArgumentException("n must be > 0");
         }
 
+        // 获得当前单生产者序列器的下一个值
         long nextValue = this.nextValue;
 
+        // 计算出下一个序列值
         long nextSequence = nextValue + n;
+        // 计算出下一个包裹点
         long wrapPoint = nextSequence - bufferSize;
+        // 获得当前单生产者序列器缓存的值
         long cachedGatingSequence = this.cachedValue;
 
+        // 如果包裹点大于缓存的收集序列值，或者缓存的收集序列值大于下一个值
         if (wrapPoint > cachedGatingSequence || cachedGatingSequence > nextValue)
         {
+            /*
+                以下不细究
+             */
             cursor.setVolatile(nextValue);  // StoreLoad fence
 
             long minSequence;
@@ -143,8 +154,10 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
             this.cachedValue = minSequence;
         }
 
+        // 设置当前单生产者序列器的下一个值
         this.nextValue = nextSequence;
 
+        // 返回下一个序列值
         return nextSequence;
     }
 
@@ -206,7 +219,9 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
     @Override
     public void publish(long sequence)
     {
+        // 将入参序列值设置为当前游标值
         cursor.set(sequence);
+        // 等待策略给陷入阻塞状态消费者发送信号
         waitStrategy.signalAllWhenBlocking();
     }
 

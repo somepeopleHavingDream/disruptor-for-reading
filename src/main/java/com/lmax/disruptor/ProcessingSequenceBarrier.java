@@ -42,12 +42,12 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
         // 如果所依赖的序列数组长度为0
         if (0 == dependentSequences.length)
         {
-            // 将当前处理序列栅栏所依赖的序列，设置为游标序列
+            // 将入参游标序列设置为当前处理序列栅栏所依赖的序列
             dependentSequence = cursorSequence;
         }
         else
         {
-            // 不细究
+            // 实例化出固定序列组，设置为当前处理序列栅栏所依赖的序列
             dependentSequence = new FixedSequenceGroup(dependentSequences);
         }
     }
