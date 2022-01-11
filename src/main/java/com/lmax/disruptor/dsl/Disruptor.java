@@ -330,6 +330,7 @@ public class Disruptor<T>
      */
     public void publishEvent(final EventTranslator<T> eventTranslator)
     {
+        // 环形缓冲发布事件
         ringBuffer.publishEvent(eventTranslator);
     }
 

@@ -52,10 +52,15 @@ public final class MultiProducerSequencer extends AbstractSequencer
      */
     public MultiProducerSequencer(int bufferSize, final WaitStrategy waitStrategy)
     {
+        // 调用父类的构造方法
         super(bufferSize, waitStrategy);
+
+        // 设置当前多生产者序列器的可用缓冲、下标掩码、下标偏移
         availableBuffer = new int[bufferSize];
         indexMask = bufferSize - 1;
         indexShift = Util.log2(bufferSize);
+
+        // 初始化可用缓冲
         initialiseAvailableBuffer();
     }
 
@@ -200,11 +205,14 @@ public final class MultiProducerSequencer extends AbstractSequencer
 
     private void initialiseAvailableBuffer()
     {
+        // 从后往前遍历可用缓冲
         for (int i = availableBuffer.length - 1; i != 0; i--)
         {
+            // 设置当前下标位置的可用缓冲值
             setAvailableBufferValue(i, -1);
         }
 
+        // 设置下标位置为0处的可用缓冲值
         setAvailableBufferValue(0, -1);
     }
 
@@ -257,7 +265,9 @@ public final class MultiProducerSequencer extends AbstractSequencer
 
     private void setAvailableBufferValue(int index, int flag)
     {
+        // 计算出入参下标对应的缓冲地址
         long bufferAddress = (index * SCALE) + BASE;
+        // 通过不安全实例在当前多生产者序列器的对应下标位置处设值为入参标记值
         UNSAFE.putOrderedInt(availableBuffer, bufferAddress, flag);
     }
 

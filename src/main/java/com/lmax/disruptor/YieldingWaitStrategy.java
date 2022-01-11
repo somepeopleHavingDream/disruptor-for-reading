@@ -33,10 +33,13 @@ public final class YieldingWaitStrategy implements WaitStrategy
         throws AlertException, InterruptedException
     {
         long availableSequence;
+        // 初始化计数器（用于自旋尝试）
         int counter = SPIN_TRIES;
 
+        // 当可用序列值小于入参序列值
         while ((availableSequence = dependentSequence.get()) < sequence)
         {
+            // 应用等待方法
             counter = applyWaitMethod(barrier, counter);
         }
 
@@ -51,10 +54,13 @@ public final class YieldingWaitStrategy implements WaitStrategy
     private int applyWaitMethod(final SequenceBarrier barrier, int counter)
         throws AlertException
     {
+        // 入参序列栅栏做检查警告操作
         barrier.checkAlert();
 
+        // 如果计数器为0
         if (0 == counter)
         {
+            // 当前线程让出cpu
             Thread.yield();
         }
         else

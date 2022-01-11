@@ -155,8 +155,10 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
         int bufferSize,
         WaitStrategy waitStrategy)
     {
+        // 实例化出一个多生产者序列器
         MultiProducerSequencer sequencer = new MultiProducerSequencer(bufferSize, waitStrategy);
 
+        // 实例化并返回出环形缓冲对象
         return new RingBuffer<E>(factory, sequencer);
     }
 
@@ -237,7 +239,7 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
                 // 创建单个生产者
                 return createSingleProducer(factory, bufferSize, waitStrategy);
             case MULTI:
-                // 暂不细究
+                // 创建多个生产者
                 return createMultiProducer(factory, bufferSize, waitStrategy);
             default:
                 // 暂不细究
@@ -494,7 +496,9 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     @Override
     public void publishEvent(EventTranslator<E> translator)
     {
+        // 获得当前环形缓冲的下一个序列值
         final long sequence = sequencer.next();
+        // 做翻译并且发布操作
         translateAndPublish(translator, sequence);
     }
 
@@ -992,10 +996,12 @@ public final class RingBuffer<E> extends RingBufferFields<E> implements Cursored
     {
         try
         {
+            // 先获得对应序列处的元素，再通过入参翻译器做转换
             translator.translateTo(get(sequence), sequence);
         }
         finally
         {
+            // 最终通过当前环形缓冲的序列器做发布操作
             sequencer.publish(sequence);
         }
     }
