@@ -95,6 +95,7 @@ class EventProcessorInfo<T> implements ConsumerInfo
     @Override
     public void markAsUsedInBarrier()
     {
+        // 将当前事件处理器信息的链尾标记置为假
         endOfChain = false;
     }
 

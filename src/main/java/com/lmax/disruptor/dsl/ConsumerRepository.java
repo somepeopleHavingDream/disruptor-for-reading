@@ -112,7 +112,7 @@ class ConsumerRepository<T> implements Iterable<ConsumerInfo>
         // 遍历所有的栅栏事件处理器
         for (Sequence barrierEventProcessor : barrierEventProcessors)
         {
-            // 不细究
+            // 获得当前栅栏事件处理器的事件处理器信息，再将该事件处理器标记为在屏障里使用
             getEventProcessorInfo(barrierEventProcessor).markAsUsedInBarrier();
         }
     }
@@ -137,6 +137,7 @@ class ConsumerRepository<T> implements Iterable<ConsumerInfo>
 
     private ConsumerInfo getEventProcessorInfo(final Sequence barrierEventProcessor)
     {
+        // 通过栅栏事件处理器序列，从映射关系中，拿到消费者信息
         return eventProcessorInfoBySequence.get(barrierEventProcessor);
     }
 }

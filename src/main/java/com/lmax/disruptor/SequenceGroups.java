@@ -91,9 +91,12 @@ class SequenceGroups
                 break;
             }
 
+            // 获得原来的序列个数
             final int oldSize = oldSequences.length;
+            // 计算出新的序列个数
             newSequences = new Sequence[oldSize - numToRemove];
 
+            // 将原序列中与入参序列不同的序列放入到新序列数组中
             for (int i = 0, pos = 0; i < oldSize; i++)
             {
                 final Sequence testSequence = oldSequences[i];
@@ -103,8 +106,10 @@ class SequenceGroups
                 }
             }
         }
+        // cas地设置新的序列组
         while (!sequenceUpdater.compareAndSet(holder, oldSequences, newSequences));
 
+        // 返回是否移除序列成功
         return numToRemove != 0;
     }
 
