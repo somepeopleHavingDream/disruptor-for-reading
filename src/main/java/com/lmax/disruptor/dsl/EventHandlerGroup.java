@@ -96,6 +96,7 @@ public class EventHandlerGroup<T>
     @SafeVarargs
     public final EventHandlerGroup<T> then(final EventHandler<? super T>... handlers)
     {
+        // 调用以xx处理事件方法
         return handleEventsWith(handlers);
     }
 
