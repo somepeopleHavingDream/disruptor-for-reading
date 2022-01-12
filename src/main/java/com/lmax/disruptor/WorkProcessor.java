@@ -170,16 +170,20 @@ public final class WorkProcessor<T>
                 }
                 else
                 {
-                    // 序列栅栏做等待操作
+                    // 序列栅栏做等待操作，获得缓存的可用序列值
                     cachedAvailableSequence = sequenceBarrier.waitFor(nextSequence);
                 }
             }
             catch (final TimeoutException e)
             {
+                // 不细究
                 notifyTimeout(sequence.get());
             }
             catch (final AlertException ex)
             {
+                /*
+                    以下不细究
+                 */
                 if (!running.get())
                 {
                     break;
@@ -187,14 +191,19 @@ public final class WorkProcessor<T>
             }
             catch (final Throwable ex)
             {
+                /*
+                    以下不细究
+                 */
                 // handle, mark as processed, unless the exception handler threw an exception
                 exceptionHandler.handleEventException(ex, nextSequence, event);
                 processedSequence = true;
             }
         }
 
+        // 通知关闭
         notifyShutdown();
 
+        // 将当前工作处理器的运行状态设置为假
         running.set(false);
     }
 
@@ -234,8 +243,12 @@ public final class WorkProcessor<T>
 
     private void notifyShutdown()
     {
+        // 如果当前工作处理器的工作处理者是生命周期感知实例
         if (workHandler instanceof LifecycleAware)
         {
+            /*
+                以下不细究
+             */
             try
             {
                 ((LifecycleAware) workHandler).onShutdown();

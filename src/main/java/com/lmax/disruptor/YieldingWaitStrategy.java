@@ -36,13 +36,14 @@ public final class YieldingWaitStrategy implements WaitStrategy
         // 初始化计数器（用于自旋尝试）
         int counter = SPIN_TRIES;
 
-        // 当可用序列值小于入参序列值
+        // 当可用序列值（一般为生产者产生的序列）小于入参序列值
         while ((availableSequence = dependentSequence.get()) < sequence)
         {
-            // 应用等待方法
+            // 应用等待方法，获得等待之后的计数器值
             counter = applyWaitMethod(barrier, counter);
         }
 
+        // 返回可用的序列值
         return availableSequence;
     }
 
@@ -65,9 +66,11 @@ public final class YieldingWaitStrategy implements WaitStrategy
         }
         else
         {
+            // 计数器减一
             --counter;
         }
 
+        // 返回计数器值
         return counter;
     }
 }

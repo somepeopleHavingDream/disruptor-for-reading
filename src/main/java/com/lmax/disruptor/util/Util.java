@@ -64,12 +64,16 @@ public final class Util
      */
     public static long getMinimumSequence(final Sequence[] sequences, long minimum)
     {
+        // 遍历入参序列集中的所有序列
         for (int i = 0, n = sequences.length; i < n; i++)
         {
+            // 获取当前遍历序列的序列值
             long value = sequences[i].get();
+            // 当前序列值与入参最小值进行比较，取两者之间的最小值
             minimum = Math.min(minimum, value);
         }
 
+        // 返回最小值
         return minimum;
     }
 

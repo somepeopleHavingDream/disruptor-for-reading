@@ -55,6 +55,9 @@ public class Sequence extends RhsPadding
         UNSAFE = Util.getUnsafe();
         try
         {
+            /*
+                填充缓存行（64个字节）消除伪共享机制来提升性能（空间换时间的思路）
+             */
             // 获得Value类value字段的偏移量
             VALUE_OFFSET = UNSAFE.objectFieldOffset(Value.class.getDeclaredField("value"));
         }
@@ -117,6 +120,7 @@ public class Sequence extends RhsPadding
      */
     public void setVolatile(final long value)
     {
+        // 通过不安全实例，给value变量赋值
         UNSAFE.putLongVolatile(this, VALUE_OFFSET, value);
     }
 

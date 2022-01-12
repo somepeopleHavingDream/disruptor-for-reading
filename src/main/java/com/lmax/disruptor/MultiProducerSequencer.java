@@ -277,23 +277,32 @@ public final class MultiProducerSequencer extends AbstractSequencer
     @Override
     public boolean isAvailable(long sequence)
     {
+        // 计算出入参序列值的下标
         int index = calculateIndex(sequence);
+        // 计算出入参序列值的可用性标识
         int flag = calculateAvailabilityFlag(sequence);
+        // 通过计算出来的下标值，计算出入参序列值在缓冲的地址
         long bufferAddress = (index * SCALE) + BASE;
+
+        // 通过不安全实例获得数组对应位置的标识值，如果该值与通过计算入参序列值所得出可用性标识相同，则入参序列值是可用的
         return UNSAFE.getIntVolatile(availableBuffer, bufferAddress) == flag;
     }
 
     @Override
     public long getHighestPublishedSequence(long lowerBound, long availableSequence)
     {
+        // 从低序列值一直遍历到高序列值
         for (long sequence = lowerBound; sequence <= availableSequence; sequence++)
         {
+            // 如果当前序列值不是可用的
             if (!isAvailable(sequence))
             {
+                // 不细究
                 return sequence - 1;
             }
         }
 
+        // 返回可用序列值
         return availableSequence;
     }
 

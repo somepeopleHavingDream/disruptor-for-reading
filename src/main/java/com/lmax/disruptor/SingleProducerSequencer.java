@@ -132,7 +132,7 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
 
         // 计算出下一个序列值
         long nextSequence = nextValue + n;
-        // 计算出下一个包裹点
+        // 计算出下一个包裹点（用于判断下一个序列值有没有绕过当前环形容器）
         long wrapPoint = nextSequence - bufferSize;
         // 获得当前单生产者序列器缓存的值
         long cachedGatingSequence = this.cachedValue;
@@ -140,21 +140,23 @@ public final class SingleProducerSequencer extends SingleProducerSequencerFields
         // 如果包裹点大于缓存的收集序列值，或者缓存的收集序列值大于下一个值
         if (wrapPoint > cachedGatingSequence || cachedGatingSequence > nextValue)
         {
-            /*
-                以下不细究
-             */
+            // 将下一个序列值设置为当前单生产者序列器的游标值
             cursor.setVolatile(nextValue);  // StoreLoad fence
 
+            // 记录最小序列值
             long minSequence;
+            // 当包裹点（生产者的序列值）大于消费者最小序列值（通过自旋，来避免锁操作）
             while (wrapPoint > (minSequence = Util.getMinimumSequence(gatingSequences, nextValue)))
             {
+                // 挂起当前线程，直至不再满足上述条件
                 LockSupport.parkNanos(1L); // TODO: Use waitStrategy to spin?
             }
 
+            // 缓存当前消费者的最小序列值
             this.cachedValue = minSequence;
         }
 
-        // 设置当前单生产者序列器的下一个值
+        // 设值当前单生产者序列器的下一个值
         this.nextValue = nextSequence;
 
         // 返回下一个序列值

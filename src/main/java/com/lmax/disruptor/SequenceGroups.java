@@ -49,16 +49,16 @@ class SequenceGroups
             // 遍历要添加的序列
             for (Sequence sequence : sequencesToAdd)
             {
-                // 将每个序列的值设置为当前游标的序列值
+                // 将每个序列的值设值为当前游标的序列值
                 sequence.set(cursorSequence);
-                // 将当前要添加的序列，放置到更新序列数组中
+                // 将当前要添加的序列，放置到更新序列数组末尾中
                 updatedSequences[index++] = sequence;
             }
         }
         // cas操作，更新入参拥有器的序列数组
         while (!updater.compareAndSet(holder, currentSequences, updatedSequences));
 
-        // 获得当前游标的序列值（之所以在这里再取一次游标的序列值，可能是因为在上述cas操作中，游标的序列值可能会发生改变）
+        // 获得当前游标的序列值（之所以在这里再取一次游标的序列值，可能是因为在上述cas操作过程中，游标的序列值可能会发生改变）
         cursorSequence = cursor.getCursor();
         // 遍历待添加序列
         for (Sequence sequence : sequencesToAdd)

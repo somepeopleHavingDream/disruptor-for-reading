@@ -68,7 +68,7 @@ final class ProcessingSequenceBarrier implements SequenceBarrier
             return availableSequence;
         }
 
-        // 获得并返回序列器的最高发布序列
+        // 获得并返回序列器的最高发布序列值
         return sequencer.getHighestPublishedSequence(sequence, availableSequence);
     }
 
